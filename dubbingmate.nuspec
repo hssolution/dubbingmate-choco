@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>dubbingmate</id>
+    <version>0.1.32</version>
+    <packageSourceUrl>https://github.com/hssolution/dubbingmate-choco</packageSourceUrl>
+    <owners>HS Solution</owners>
+    <title>DubbingMate</title>
+    <authors>HS Solution</authors>
+    <projectUrl>https://dubbingmate.com</projectUrl>
+    <iconUrl>https://dubbingmate.com/assets/icon128.png</iconUrl>
+    <copyright>Copyright © 2026 HSSolution</copyright>
+    <licenseUrl>https://dubbingmate.com/terms/</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>dubbingmate youtube dubbing tts subtitles text-to-speech desktop</tags>
+    <summary>Desktop app that reads YouTube subtitles aloud as speech in the language you choose.</summary>
+    <description>DubbingMate is a desktop app (Windows and macOS) that turns the subtitles of a YouTube video into synthesized speech in the language you pick, so you can listen instead of reading. You can adjust the balance between the original audio and the dubbed voice.
+
+## Licensing
+
+DubbingMate is commercial software. The first dubbing starts a 72-hour free trial, with no card required. After the trial, continued use needs a one-time purchase (a license key for up to 3 devices, no subscription). Details are at https://dubbingmate.com.
+
+## Package notes
+
+* The package downloads the official installer from dubbingmate.com and checks its SHA256 checksum.
+* The installer is an NSIS installer that is not code signed, so Windows SmartScreen may show a warning.
+* Silent install uses the /S switch. Installation is per user (no administrator rights needed).
+* Privacy policy: https://dubbingmate.com/privacy/
+</description>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

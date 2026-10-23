@@ -1,0 +1,46 @@
+name: test
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: choco pack
+        shell: pwsh
+        run: choco pack
+      - name: choco install
+        shell: pwsh
+        run: choco install dubbingmate -s . -y --no-progress
+      - name: verify installed
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs\DubbingMate\DubbingMate.exe'
+          if (-not (Test-Path $exe)) {
+            $k = Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*','HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -like 'DubbingMate*' } | Select-Object -First 1
+            Write-Host "registry: $($k.DisplayName) $($k.InstallLocation)"
+            $exe = Join-Path $k.InstallLocation 'DubbingMate.exe'
+          }
+          Write-Host "exe: $exe"
+          if (-not (Test-Path $exe)) { throw "DubbingMate.exe not found" }
+          Get-Item $exe | Format-List FullName,Length
+      - name: stop app if running
+        shell: pwsh
+        run: Get-Process DubbingMate -ErrorAction SilentlyContinue | Stop-Process -Force; exit 0
+      - name: choco uninstall
+        shell: pwsh
+        run: choco uninstall dubbingmate -y
+      - name: verify removed
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs\DubbingMate\DubbingMate.exe'
+          $k = Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*','HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -like 'DubbingMate*' }
+          if (Test-Path $exe) { throw "exe still exists" }
+          if ($k) { throw "uninstall registry key still exists" }
+          Write-Host "removed OK"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nupkg
+          path: "*.nupkg"
