@@ -1,0 +1,17 @@
+name: debug
+on: workflow_dispatch
+jobs:
+  d:
+    runs-on: windows-latest
+    steps:
+      - shell: pwsh
+        run: |
+          Invoke-WebRequest https://dubbingmate.com/download/updates/DubbingMate-Setup-0.1.32-x64.exe -OutFile $env:TEMP\s.exe
+          foreach ($i in 1..3) {
+            $p = Start-Process $env:TEMP\s.exe -ArgumentList '/S' -Wait -PassThru
+            Write-Host "try $i exit=$($p.ExitCode)"
+            $d = "$env:LOCALAPPDATA\Programs\DubbingMate"
+            Write-Host "dir exists: $(Test-Path $d)"; if (Test-Path $d) { Get-ChildItem $d | Select -First 8 | % { Write-Host $_.Name } }
+            Get-Process DubbingMate -ErrorAction SilentlyContinue | % { Write-Host "running $($_.Id)" }
+            Get-WinEvent -FilterHashtable @{LogName='Application';Level=2} -MaxEvents 5 -ErrorAction SilentlyContinue | % { Write-Host $_.Message.Substring(0,[Math]::Min(300,$_.Message.Length)) }
+          }
