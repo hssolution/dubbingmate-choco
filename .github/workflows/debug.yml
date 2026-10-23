@@ -4,6 +4,7 @@ jobs:
   d:
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v4
       - shell: pwsh
         run: |
           Invoke-WebRequest https://dubbingmate.com/download/updates/DubbingMate-Setup-0.1.32-x64.exe -OutFile $env:TEMP\s.exe
